@@ -7,7 +7,7 @@ import (
 
 func TestSome(t *testing.T) {
 	opt := Some(42)
-	if !opt.IsSome() {
+	if IsNone(opt) {
 		t.Errorf("Some(42) should be Some")
 	}
 	if val := opt.Ok(); val != 42 {
@@ -18,7 +18,7 @@ func TestSome(t *testing.T) {
 func TestNone(t *testing.T) {
 	customError := errors.New("custom error")
 	opt := None[int](customError)
-	if opt.IsSome() {
+	if IsSome(opt) {
 		t.Errorf("None should not be Some")
 	}
 	if cause := opt.Cause(); cause == nil || !errors.Is(cause, customError) {
@@ -47,7 +47,7 @@ func TestProcess(t *testing.T) {
 		return 2 * v, nil
 	})
 
-	if !resultZero.IsNone() || resultZero.Cause() == nil || resultZero.Cause().Error() != "zero value" {
+	if !IsNone(resultZero) || resultZero.Cause() == nil || resultZero.Cause().Error() != "zero value" {
 		t.Errorf("Expected zero value error, got %v", resultZero.Cause())
 	}
 }
@@ -57,7 +57,7 @@ func TestMap(t *testing.T) {
 	newOpt := Map(opt, func(v int) int {
 		return v + 3
 	})
-	if !newOpt.IsSome() {
+	if !IsSome(newOpt) {
 		t.Errorf("Map should return Some")
 	}
 	if val := newOpt.Ok(); val != 8 {
@@ -68,7 +68,7 @@ func TestMap(t *testing.T) {
 func TestFlatten(t *testing.T) {
 	opt := Some(Some(100))
 	flatOpt := Flatten(opt)
-	if !flatOpt.IsSome() {
+	if !IsSome(flatOpt) {
 		t.Errorf("Flatten should return Some")
 	}
 	if val := flatOpt.Ok(); val != 100 {
@@ -79,7 +79,7 @@ func TestFlatten(t *testing.T) {
 func TestNoneFlatten(t *testing.T) {
 	opt := None[Option[int]]()
 	flatOpt := Flatten(opt)
-	if flatOpt.IsSome() {
+	if IsSome(flatOpt) {
 		t.Errorf("Flatten of None should return None")
 	}
 	if !errors.Is(flatOpt.Cause(), Nil) {

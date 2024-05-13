@@ -18,8 +18,6 @@ var (
 type Option[T any] interface {
 	Cause() error // Cause returns an error if the option is none due to an error.
 	Ok() T        // Ok returns the value if present, otherwise a zero value.
-	IsSome() bool // IsSome returns true if the option contains a value.
-	IsNone() bool // IsNone returns true if the option does not contain a value.
 }
 
 // Some returns an Option containing the value t. t must be valid!
@@ -61,13 +59,13 @@ func (opt *option[T]) Ok() T {
 }
 
 // IsSome returns true if the option holds a value (i.e., cause is nil).
-func (opt *option[T]) IsSome() bool {
+func IsSome[T any](opt Option[T]) bool {
 	return opt.Cause() == nil
 }
 
 // IsNone returns true if the option does not hold a value (i.e., cause is not nil).
-func (opt *option[T]) IsNone() bool {
-	return !opt.IsSome()
+func IsNone[T any](opt Option[T]) bool {
+	return !IsSome(opt)
 }
 
 // Process applies a function to the value within the Option, returning a new Option with the result.
