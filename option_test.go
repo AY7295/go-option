@@ -1,6 +1,7 @@
 package option
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
 )
@@ -84,5 +85,49 @@ func TestNoneFlatten(t *testing.T) {
 	}
 	if !errors.Is(flatOpt.Cause(), Nil) {
 		t.Errorf("")
+	}
+}
+
+func TestOptionMarshalJSON(t *testing.T) {
+	opt := Some(42)
+	data, err := json.Marshal(opt)
+	if err != nil {
+		t.Errorf("MarshalJSON failed: %v", err)
+	}
+	if string(data) != "42" {
+		t.Errorf("Expected 42, got %v", string(data))
+	}
+
+	opt = None[int](errors.New("custom error"))
+	data, err = json.Marshal(opt)
+	if err != nil {
+		t.Errorf("MarshalJSON failed: %v", err)
+	}
+	if string(data) != "null" {
+		t.Errorf("Expected null, got %v", string(data))
+	}
+}
+
+func TestOptionUnmarshalJSON(t *testing.T) {
+	opt := Some(0)
+	err := json.Unmarshal([]byte("42"), opt)
+	if err != nil {
+		t.Errorf("UnmarshalJSON failed: %v", err)
+	}
+	if !IsSome(opt) {
+		t.Errorf("Expected Some, got None")
+	}
+	if val := opt.Ok(); val != 42 {
+		t.Errorf("Expected 42, got %v", val)
+	}
+	err = json.Unmarshal([]byte("null"), opt)
+	if err != nil {
+		t.Errorf("UnmarshalJSON failed: %v", err)
+	}
+	if IsSome(opt) {
+		t.Errorf("Expected None, got Some")
+	}
+	if !errors.Is(opt.Cause(), Nil) {
+		t.Errorf("Expected Nil, got %v", opt.Cause())
 	}
 }

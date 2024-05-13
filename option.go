@@ -3,6 +3,7 @@
 package option
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -56,6 +57,23 @@ func (opt *option[T]) Ok() T {
 		return zero
 	}
 	return opt.val
+}
+
+// MarshalJSON converts the option to JSON.
+func (opt *option[T]) MarshalJSON() ([]byte, error) {
+	if opt.cause != nil {
+		return []byte(`null`), nil
+	}
+	return json.Marshal(opt.val)
+}
+
+// UnmarshalJSON converts JSON to an option.
+func (opt *option[T]) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 || string(data) == "null" || string(data) == "{}" || string(data) == "[]" {
+		opt.cause = Nil
+		return nil
+	}
+	return json.Unmarshal(data, &opt.val)
 }
 
 // IsSome returns true if the option holds a value (i.e., cause is nil).
