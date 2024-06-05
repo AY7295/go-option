@@ -6,13 +6,11 @@ The `Option` package provides an `Option` type that represents encapsulation of 
 
 - **Some**: Create an `Option` that contains a value.
 - **None**: Create an `Option` that represents no value.
-- **IsSome** and **IsNone**: Check if `Option` has a value or not.
 - **Ok**: Return the value if it exists.
 - **Cause**: Return the cause of `None` if it is due to an error.
 - **Process**: Transform the `Option` value with a function that might fail.
 - **Map**: Transform the `Option` value with a function that cannot fail.
 - **Flatten**: Flatten nested `Option` values into a single `Option`.
-- **Other**: More functions for `Option` is coming.
 
 ## Installation
 
