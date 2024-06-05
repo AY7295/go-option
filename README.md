@@ -10,8 +10,9 @@ The `Option` package provides an `Option` type that represents encapsulation of 
 - **Cause**: Return the cause of `None` if it is due to an error.
 - **Process**: Transform the `Option` value with a function that might fail.
 - **Map**: Transform the `Option` value with a function that cannot fail.
-- **Flatten**: Flatten nested `Option` values into a single `Option`.
-
+- **Flatten**: Nested `Option` values into a single `Option`.
+- **Wrap**: Wraps a value and an error into an `Option`.
+- **WrapFn**: Wraps a function that returns a value and an error into a function that returns an `Option`.
 ## Installation
 
 To use the `Option` package in your Go project, place the package in your project directory or a suitable location in your GOPATH. Import it using:

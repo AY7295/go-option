@@ -125,3 +125,18 @@ func Flatten[T any](opt Option[Option[T]]) Option[T] {
 	}
 	return opt.Ok()
 }
+
+// Wrap wraps a value and an error into an Option.
+func Wrap[T any](t T, err error) Option[T] {
+	if err != nil {
+		return None[T](err)
+	}
+	return Some(t)
+}
+
+// WrapFn wraps a function that returns a value and an error into a function that returns an Option.
+func WrapFn[T any](fn func() (T, error)) func() Option[T] {
+	return func() Option[T] {
+		return Wrap(fn())
+	}
+}
