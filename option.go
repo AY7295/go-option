@@ -101,7 +101,9 @@ func Flatten[T any](opt Option[Option[T]]) Option[T] {
 
 // Wrap wraps a value and an error into an Option.
 func Wrap[T any](val T, err ...error) Option[T] {
-	if err = slices.Compact(err); len(err) > 0 {
+	if err = slices.DeleteFunc(err, func(err error) bool {
+		return err == nil
+	}); len(err) > 0 {
 		return None[T](err...)
 	}
 	return Some(val)
