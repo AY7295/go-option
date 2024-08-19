@@ -84,9 +84,7 @@ func Map[T, U any](opt Option[T], fn func(T) U) Option[U] {
 		return None[U](opt.Cause())
 	}
 
-	return WrapFn(func() (U, error) {
-		return fn(opt.Ok()), nil
-	})()
+	return Some(fn(opt.Ok()))
 }
 
 // Flatten converts an Option[Option[T]] into a single Option[T].
@@ -100,8 +98,8 @@ func Flatten[T any](opt Option[Option[T]]) Option[T] {
 
 // Wrap wraps a value and an error into an Option.
 func Wrap[T any](val T, errs ...error) Option[T] {
-	if err := errors.Join(errs...); err != nil {
-		return None[T](err)
+	if errors.Join(errs...) != nil {
+		return None[T](errs...)
 	}
 	return Some(val)
 }
