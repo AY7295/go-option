@@ -4,7 +4,6 @@ package option
 
 import (
 	"errors"
-	"slices"
 )
 
 // Nil is a pre-defined error to represent a nil value being incorrectly used to create an Option.
@@ -100,11 +99,9 @@ func Flatten[T any](opt Option[Option[T]]) Option[T] {
 }
 
 // Wrap wraps a value and an error into an Option.
-func Wrap[T any](val T, err ...error) Option[T] {
-	if err = slices.DeleteFunc(err, func(err error) bool {
-		return err == nil
-	}); len(err) > 0 {
-		return None[T](err...)
+func Wrap[T any](val T, errs ...error) Option[T] {
+	if err := errors.Join(errs...); err != nil {
+		return None[T](err)
 	}
 	return Some(val)
 }
