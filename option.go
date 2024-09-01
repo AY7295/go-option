@@ -104,6 +104,11 @@ func Wrap[T any](val T, errs ...error) Option[T] {
 	return Some(val)
 }
 
+// Unwrap unwraps the Option to value and error
+func Unwrap[T any](opt Option[T]) (T, error) {
+	return opt.Ok(), opt.Cause()
+}
+
 // WrapFn wraps a function that returns a value and an error into a function that returns an Option.
 func WrapFn[T any](fn func() (T, error)) func() Option[T] {
 	return func() Option[T] {
